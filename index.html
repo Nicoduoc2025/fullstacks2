@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonido Vivo - Tienda de Instrumentos Musicales</title>
+
+  <link rel="stylesheet" href="styles.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <div class="academic-badge">
+      <i class="fa-solid fa-graduation-cap"></i> DUOC UC
+    </div>
+    
+    <div class="role-selector">
+      <span><i class="fa-solid fa-user-gear"></i> Modo de Vista:</span>
+      <select id="roleSelect" onchange="changeRole(this.value)">
+        <option value="CLIENTE">Cliente (Tienda Online)</option>
+        <option value="VENDEDOR">Vendedor / Empleado</option>
+        <option value="ADMIN">Administrador</option>
+      </select>
+    </div>
+  </header>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand" onclick="showSection('catalogSection')">
+        <i class="fa-solid fa-guitar brand-icon"></i>
+        <div>
+          <span class="brand-name">SONIDO VIVO</span>
+          <span class="brand-sub">Viña del Mar</span>
+        </div>
+      </a>
+
+      <button class="menu-toggle" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#" class="active" onclick="showSection('catalogSection')"><i class="fa-solid fa-store"></i> Catálogo</a></li>
+        <li><a href="#" onclick="showSection('mapSection')"><i class="fa-solid fa-location-dot"></i> Tienda & Retiros</a></li>
+        <li><a href="#" onclick="showSection('trackingSection')"><i class="fa-solid fa-truck"></i> Mis Pedidos</a></li>
+        
+        <li class="staff-only" style="display:none;"><a href="#" onclick="showSection('adminSection')"><i class="fa-solid fa-boxes-stacked"></i> Control de Stock</a></li>
+        <li class="admin-only" style="display:none;"><a href="#" onclick="showSection('usersSection')"><i class="fa-solid fa-users-gear"></i> Gestión de Usuarios</a></li>
+      </ul>
+
+      <div class="cart-trigger" onclick="toggleModal('cartModal')">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    
+    <section id="catalogSection" class="content-section active">
+      <div class="hero-banner">
+        <h1>Equipos e Instrumentos para Músicos</h1>
+        <p>Envíos a todo Chile vía Starken/Chilexpress o retiro gratuito en nuestra tienda de Viña del Mar.</p>
+      </div>
+
+      <div class="catalog-controls">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Buscar por producto, marca (Yamaha, Fender, Boss...)" oninput="filterProducts()">
+        </div>
+      
+        <div class="filter-box">
+         
+          
+    
+          </i> Categorías: </label>
+         
+          <select id="categorySelect" onchange="filterProducts()">
+            <option value="ALL">Todas las categorías</option>
+            <option value="Guitarras Acústicas">Guitarras Acústicas</option>
+            <option value="Guitarras Eléctricas">Guitarras Eléctricas</option>
+            <option value="Bajos Eléctricos">Bajos Eléctricos</option>
+            <option value="Teclados y Pianos">Teclados y Pianos</option>
+            <option value="Baterías">Baterías</option>
+            <option value="Amplificadores">Amplificadores</option>
+            <option value="Pedales de Efectos">Pedales de Efectos</option>
+            <option value="Micrófonos">Micrófonos</option>
+            <option value="Estudio y Grabación">Estudio y Grabación</option>
+            <option value="Accesorios">Accesorios</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <section id="mapSection" class="content-section">
+      <div class="section-header">
+        <h2>Ubicación de Tienda Física y Puntos de Retiro</h2>
+        <p>Visítanos en Viña del Mar o retira tus compras web en nuestros puntos autorizados.</p>
+      </div>
+      <div class="map-layout">
+        <div id="leafletMap" class="map-container"></div>
+        <div class="store-info-card">
+          <h3><i class="fa-solid fa-store"></i> Casa Matriz Viña del Mar</h3>
+          <p><i class="fa-solid fa-location-dot"></i> Calle Arlegui #450, Viña del Mar[cite: 1]</p>
+          <p><i class="fa-solid fa-clock"></i> Lunes a Viernes: 10:00 - 19:00 hrs | Sábados: 10:00 - 14:00 hrs</p>
+          <p><i class="fa-solid fa-phone"></i> +56 32 212 3456</p>
+          <hr>
+          <h4>Puntos de Retiro Disponibles</h4>
+          <ul>
+            <li><strong>Sucursal Starken Viña:</strong> Av. Libertad 820[cite: 1]</li>
+            <li><strong>Chilexpress Reñaca:</strong> Av. Borgoño 14200[cite: 1]</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="trackingSection" class="content-section">
+      <div class="section-header">
+        <h2>Seguimiento de Pedidos</h2>
+        <p>Consulta el estado actual de tus compras remotas en tiempo real[cite: 1].</p>
+      </div>
+
+      <div class="tracking-search">
+        <input type="text" id="trackingInput" placeholder="Ingresa tu código de pedido (ej: SV-8041)">
+        <button onclick="trackOrder()"><i class="fa-solid fa-search"></i> Consultar Estado</button>
+      </div>
+
+      <div id="trackingResult" class="tracking-result-box" style="display:none;"></div>
+    </section>
+
+    <section id="adminSection" class="content-section">
+      <div class="section-header">
+        <h2>Control Centralizado de Inventario</h2>
+        <p>Actualización de stock en tiempo real[cite: 1].</p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio CLP</th>
+              <th>Stock Actual</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="usersSection" class="content-section">
+      <div class="section-header">
+        <h2>Gestión de Usuarios del Sistema</h2>
+        <p>Administración de cuentas, roles de acceso y estados de usuarios registrados[cite: 1].</p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Correo Electrónico</th>
+              <th>Rol Asignado</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="cartModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-cart-shopping"></i> Carrito de Compras</h3>
+        <span class="close-btn" onclick="toggleModal('cartModal')">&times;</span>
+      </div>
+      <div class="modal-body" id="cartItemsContainer"></div>
+      <div class="modal-footer">
+        <div class="cart-total">
+          <span>Total:</span>
+          <strong id="cartTotalAmount">$0 CLP</strong>
+        </div>
+        <button class="btn-checkout" onclick="checkout()"><i class="fa-solid fa-credit-card"></i> Confirmar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
