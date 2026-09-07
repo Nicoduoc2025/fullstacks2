@@ -211,7 +211,7 @@ function updateInventoryTable() {
 function addStock(code) {
   const prod = productsData.find(p => p.Codigo === code);
   if (prod) {
-    prod.Stock += 5;
+    prod.Stock += 1;
     updateInventoryTable();
     renderCatalog(productsData);
   }
