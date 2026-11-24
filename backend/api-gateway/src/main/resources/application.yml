@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: servicio-usuarios
+              uri: lb://usuario-service
+              predicates:
+                - Path=/api/usuarios/**
+            - id: servicio-productos
+              uri: lb://producto-service
+              predicates:
+                - Path=/api/productos/**
+            - id: servicio-pedidos
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/pedidos/**
+            - id: servicio-notificaciones
+              uri: lb://notificacion-service
+              predicates:
+                - Path=/api/notificaciones/**
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+logging:
+  file:
+    name: logs/api-gateway.log
+
+seguridad:
+  jwt:
+    secreto: ${JWT_SECRET:sonido-vivo-clave-jwt-2026-microservicios-segura-123456789}
